@@ -4,7 +4,6 @@ import time
 import os
 import xlrd
 from openpyxl import Workbook
-
 from db import DBConn
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -232,7 +231,6 @@ def phone_check(s):
 
     return True if len(s) == 11 and s.isdigit() and s[:3] in phone_prefix else False
 
-
 # def get_user_role(username, password=''):
 #     db = DBConn()
 #     if phone_check(username):
@@ -245,7 +243,6 @@ def phone_check(s):
 #     role = result[0] if result else ''
 #     status = result[1] if result else ''
 #     return role, status
-
 
 def get_user_role(username, password=''):
     db = DBConn()
@@ -266,7 +263,6 @@ def get_user_role(username, password=''):
         role = result[0] if result else ''
         status = result[1] if result else ''
         return role, status
-
 
 def get_other_info(username):
     db = DBConn()
@@ -305,7 +301,7 @@ def change_password(info):
                                                         'update_time': datetime.datetime.now()})
 
         return {'data': '', 'errcode': 0, 'msg': '更新成功！'}
-    elif result and result[0] != info['old_passwd']:
+    elif result and check_password_hash(result,info['old_password']):
         return {'data': '', 'errcode': 1, 'msg': '旧密码错误！'}
     elif info['new_passwd'] == info['old_passwd']:
         return {'data': '', 'errcode': 1, 'msg': '新密码和旧密码不能一样！'}
@@ -595,7 +591,6 @@ def get_project_files(project_number, project_name):
 
     return {'data': file_list, 'errcode': 0, 'msg': ""}
 
-
 def save_simple_data(project_id, data):
     try:
         table_name = "sample_table"
@@ -641,7 +636,6 @@ def get_project_info(project_id):
     result = db.execute(cmd, get_all=False)
 
     return dict(result)
-
 
 if __name__ == '__main__':
     print get_project_files('111', '111')
