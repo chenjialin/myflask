@@ -13,6 +13,11 @@
 <script src="/static/js/jquery.jqGrid.src.js"></script>
 <script src="/static/js/grid.locale-en.js"></script>
 <script src="/static/js/main.js"></script>
+<script>
+ $(document).ready(function(){
+   show_my_project();
+ });
+</script>
 <body>
 <style>
     li>div>span {
@@ -31,6 +36,7 @@
                         用户名: {{ username }}
                     {% endif %}
                     </a>
+                    <!--
                     <a class="navbar-brand active" href="#"  onclick="show_my_project()">
                         {% if role=='user' %}
                             我的项目
@@ -38,6 +44,7 @@
                             我负责的项目
                         {% endif %}
                     </a>
+                  -->
 				</div>
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 					<ul class="nav navbar-nav">
@@ -148,7 +155,8 @@
                                 </li>
                                 <li>
                                     <a>请输入新密码</a>
-							        <input type="password" id="new-password" placeholder="新密码" style="width: 200px">
+							        <input type="password" id=
+                                <li id="new-password" placeholder="新密码" style="width: 200px">
                                     <div id="new-password-mess"></div>
                                 </li>
                             </ul>
@@ -162,6 +170,7 @@
 			</div>
 
             <div id="page_detail">
+              <!--
                 <div id="self_info" class="jumbotron" style="padding-bottom: 150px">
                     <h2>个人信息</h2>
                     <p>
@@ -203,6 +212,7 @@
                         </div>
                     </p>
                 </div>
+              -->
                 <div id="selected_project_div" hidden>
                     <a>选择数据项目: </a>
                     <select id="selected_project" onchange="show_render()">
@@ -211,7 +221,7 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="jumbotron" id="detail">
+      <div class="jumbotron" id="detail">
 				<h1>欢迎登录建库信息系统</h1>
 				<p>
 					在系统中，您可以点击上面的“新建项目”，跳转到新页面，然后提供给我们您的基本信息，您也可以通过点击“数据分析” 提供给我们您的样品分组信息和差异比较方案，我们将最近根据您提供的信息尽快分析得出结果。
@@ -221,7 +231,7 @@
 					 <a class="btn btn-primary btn-large" href="http://www.onmath.cn/">了解更多</a>
 				</p>
 			</div>
-            </div>
+    </div>
 		</div>
 	</div>
 </div>
@@ -330,17 +340,24 @@
     function show_sample_table(project_id) {
         $('#page_detail').render('/get_sample_page?project_id=' + project_id);
     }
+    /*
+    add show_log_table by chencheng
+    */
+    function show_log_table(project_id) {
+      $("#page_detail").render('/get_log_page?project_id=' + project_id);
+    }
 
     function format_upload_button(cellvalue, options, rowObject) {
         var project_id = rowObject['project_id'];
         return "<button onclick='show_upload_page("+project_id+")'>项目文件</button>" +
-                "<button onclick='show_sample_table("+project_id+")'>样品</button>";
+                "<button onclick='show_sample_table("+project_id+")'>样品</button>" +
+                "<button onclick='show_log_table("+project_id+")'>log表格</button>";
     }
 
     function show_my_project() {
 //        $('#page_detail')
 //        $('#selected_project_div').hide();
-        $("#page_detail").children().remove();
+        //$("#page_detail").children().remove();
         $('#page_detail').append("<table id='show_all'></table>");
         var role = "{{ role }}";
         var table_title =  "我申请的项目:（双击行可修改项目）";
@@ -352,7 +369,7 @@
         $("#show_all").jqGrid({
             datatype: 'local',
             height: 250,
-            colNames: ['project_id', '项目编号', '项目名称', '客户单位', '客户姓名', 'E-mail' ,'联系电话' ,'销售姓名',
+            colNames: ['project_id', '项目编号', '项目名称', '客户单位', '客户姓名', 'E-mail' ,'联系电话' ,
                 '送样日期', '样本数量', '项目负责人', '项目状态', '创建时间', '', ''],
             colModel: [
                 { name: 'project_id', index: 'project_id', width: 65, editable:false, hidden:true},
@@ -362,14 +379,13 @@
                 { name: 'cust_user', index: 'cust_user', width: 65, editable:false},
                 { name: 'email', index: 'email', width: 65, editable:false},
                 { name: 'cust_tel', index: 'cust_tel', width: 65, editable:false},
-                { name: 'sale_name', index: 'sale_name', width: 65, editable:false},
                 { name: 'sp_delive_date', index: 'sp_delive_date', width: 65, editable:false},
                 { name: 'sp_sum', index: 'sp_sum', width: 65},
                 { name: 'project_leader', index: 'project_leader', width: 80, editable:false},
                 { name: 'status', index: 'status', width: 80, editable: true, edittype: 'select', editoptions: { value: status_list, maxLength: 20 }},
                 { name: 'create_time', index: 'create_time', width: 120, editable:false},
                 { name: 'save', index: 'save', width: 120, editable:false},
-                { name: 'action', index: 'action', width: 130, hidden: false, formatter:format_upload_button}
+                { name: 'action', index: 'action', width: 200, hidden: false, formatter:format_upload_button}
             ],
             ondblClickRow: function(rowid) {
                 var project_id = $("#show_all").getRowData(rowid)['project_id'];
